@@ -20,9 +20,18 @@ function createCard(city) {
   card.className = "weather-card";
   card.dataset.cityId = city.id;
 
+  const topRow = document.createElement("div");
+  topRow.className = "weather-card__top";
+
   const cityTitle = document.createElement("h2");
   cityTitle.className = "weather-card__city";
   cityTitle.textContent = city.name;
+
+  const removeButton = document.createElement("button");
+  removeButton.type = "button";
+  removeButton.className = "weather-card__remove";
+  removeButton.setAttribute("aria-label", `Remove ${city.name}`);
+  removeButton.textContent = "Remove";
 
   const tempValue = document.createElement("p");
   tempValue.className = "weather-card__temp";
@@ -36,9 +45,10 @@ function createCard(city) {
   updated.className = "weather-card__updated";
   updated.textContent = "";
 
-  card.append(cityTitle, tempValue, status, updated);
+  topRow.append(cityTitle, removeButton);
+  card.append(topRow, tempValue, status, updated);
 
-  return { card, tempValue, status, updated };
+  return { card, tempValue, status, updated, removeButton };
 }
 
 async function fetchWeather(city) {
@@ -127,15 +137,29 @@ function refreshCityOptions(select, button) {
   const hasChoices = select.options.length > 1;
   select.disabled = !hasChoices;
   button.disabled = !hasChoices;
+  select.value = "";
 }
 
-function addCityToDashboard(city, grid) {
+function removeCityFromDashboard(cityId, card, ui) {
+  if (!addedCityIds.has(cityId)) {
+    return;
+  }
+
+  addedCityIds.delete(cityId);
+  card.remove();
+  refreshCityOptions(ui.select, ui.addButton);
+  if (!ui.select.disabled) {
+    ui.select.focus();
+  }
+}
+
+function addCityToDashboard(city, ui) {
   if (addedCityIds.has(city.id)) {
     return false;
   }
 
-  const { card, tempValue, status, updated } = createCard(city);
-  grid.appendChild(card);
+  const { card, tempValue, status, updated, removeButton } = createCard(city);
+  ui.grid.appendChild(card);
   addedCityIds.add(city.id);
 
   fetchWeather(city)
@@ -146,6 +170,10 @@ function addCityToDashboard(city, grid) {
       console.error(`Failed to load weather for ${city.name}:`, error);
       showError(tempValue, status, updated);
     });
+
+  removeButton.addEventListener("click", () => {
+    removeCityFromDashboard(city.id, card, ui);
+  });
 
   return true;
 }
@@ -160,10 +188,12 @@ function initDashboard() {
     return;
   }
 
+  const ui = { grid, select, addButton };
+
   defaultCityIds.forEach((cityId) => {
     const city = cityLookup.get(cityId);
     if (city) {
-      addCityToDashboard(city, grid);
+      addCityToDashboard(city, ui);
     }
   });
 
@@ -181,8 +211,10 @@ function initDashboard() {
       return;
     }
 
-    addCityToDashboard(city, grid);
-    refreshCityOptions(select, addButton);
+    const added = addCityToDashboard(city, ui);
+    if (added) {
+      refreshCityOptions(select, addButton);
+    }
   });
 }
 

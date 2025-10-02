@@ -8,6 +8,7 @@ A lightweight static web page that fetches current temperatures (°C) for popula
 - Displays "Data unavailable" when the API call fails
 - Rounded Celsius temperature display per city
 - Add additional cities from a curated list directly on the page
+- Remove city cards you no longer need
 
 ## Getting Started
 1. Clone the repository:
