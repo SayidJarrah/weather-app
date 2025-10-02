@@ -30,3 +30,10 @@ This project is optimized for static hosting. You can deploy the contents of the
 - Configure CI pipeline with automated checks
 - Package static assets as a deployable artifact
 - Set up automated deployment to a free hosting provider
+
+## Continuous Integration
+A GitHub Actions workflow (`.github/workflows/ci.yml`) runs on pushes and pull requests to main and feature branches. The job:
+- Lints the HTML via `npm run test` (powered by `htmlhint` through `npx`).
+- Builds static assets into `dist/` using a small Node script (`scripts/build.mjs`).
+- Uploads the built `dist/` directory as an artifact.
+- Builds an Nginx-based Docker image and stores it as a compressed artifact for download.
