@@ -1,0 +1,11 @@
+{
+  "name": "simple-weather-dashboard",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "lint": "npx htmlhint index.html",
+    "build": "node scripts/build.mjs",
+    "test": "npm run lint"
+  }
+}
