@@ -1,15 +1,24 @@
-const cities = [
-  { name: "Kyiv", latitude: 50.4501, longitude: 30.5234 },
-  { name: "Singapore", latitude: 1.3521, longitude: 103.8198 },
-  { name: "London", latitude: 51.5074, longitude: -0.1278 },
-  { name: "Sydney", latitude: -33.8688, longitude: 151.2093 }
+const cityCatalog = [
+  { id: "kyiv", name: "Kyiv", label: "Kyiv, Ukraine", latitude: 50.4501, longitude: 30.5234 },
+  { id: "singapore", name: "Singapore", label: "Singapore", latitude: 1.3521, longitude: 103.8198 },
+  { id: "london", name: "London", label: "London, United Kingdom", latitude: 51.5074, longitude: -0.1278 },
+  { id: "sydney", name: "Sydney", label: "Sydney, Australia", latitude: -33.8688, longitude: 151.2093 },
+  { id: "new-york", name: "New York", label: "New York, USA", latitude: 40.7128, longitude: -74.006 },
+  { id: "tokyo", name: "Tokyo", label: "Tokyo, Japan", latitude: 35.6762, longitude: 139.6503 },
+  { id: "berlin", name: "Berlin", label: "Berlin, Germany", latitude: 52.52, longitude: 13.405 },
+  { id: "toronto", name: "Toronto", label: "Toronto, Canada", latitude: 43.6532, longitude: -79.3832 }
 ];
 
+const defaultCityIds = ["kyiv", "singapore", "london", "sydney"];
+const cityLookup = new Map(cityCatalog.map((city) => [city.id, city]));
+
 const apiBase = "https://api.open-meteo.com/v1/forecast";
+const addedCityIds = new Set();
 
 function createCard(city) {
   const card = document.createElement("article");
   card.className = "weather-card";
+  card.dataset.cityId = city.id;
 
   const cityTitle = document.createElement("h2");
   cityTitle.className = "weather-card__city";
@@ -94,23 +103,86 @@ function showError(tempEl, statusEl, updatedEl) {
   updatedEl.textContent = "";
 }
 
-async function initDashboard() {
+function refreshCityOptions(select, button) {
+  select.innerHTML = "";
+
+  const placeholder = document.createElement("option");
+  placeholder.value = "";
+  placeholder.disabled = true;
+  placeholder.selected = true;
+  placeholder.textContent = "Select a city";
+  select.appendChild(placeholder);
+
+  cityCatalog.forEach((city) => {
+    if (addedCityIds.has(city.id)) {
+      return;
+    }
+
+    const option = document.createElement("option");
+    option.value = city.id;
+    option.textContent = city.label ?? city.name;
+    select.appendChild(option);
+  });
+
+  const hasChoices = select.options.length > 1;
+  select.disabled = !hasChoices;
+  button.disabled = !hasChoices;
+}
+
+function addCityToDashboard(city, grid) {
+  if (addedCityIds.has(city.id)) {
+    return false;
+  }
+
+  const { card, tempValue, status, updated } = createCard(city);
+  grid.appendChild(card);
+  addedCityIds.add(city.id);
+
+  fetchWeather(city)
+    .then((weather) => {
+      showWeather(tempValue, status, updated, weather);
+    })
+    .catch((error) => {
+      console.error(`Failed to load weather for ${city.name}:`, error);
+      showError(tempValue, status, updated);
+    });
+
+  return true;
+}
+
+function initDashboard() {
   const grid = document.getElementById("weather-grid");
-  if (!grid) {
+  const pickerForm = document.getElementById("city-picker");
+  const select = document.getElementById("city-select");
+  const addButton = pickerForm?.querySelector(".city-picker__button");
+
+  if (!grid || !pickerForm || !select || !addButton) {
     return;
   }
 
-  cities.forEach(async (city) => {
-    const { card, tempValue, status, updated } = createCard(city);
-    grid.appendChild(card);
-
-    try {
-      const weather = await fetchWeather(city);
-      showWeather(tempValue, status, updated, weather);
-    } catch (error) {
-      console.error(`Failed to load weather for ${city.name}:`, error);
-      showError(tempValue, status, updated);
+  defaultCityIds.forEach((cityId) => {
+    const city = cityLookup.get(cityId);
+    if (city) {
+      addCityToDashboard(city, grid);
     }
+  });
+
+  refreshCityOptions(select, addButton);
+
+  pickerForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const selectedId = select.value;
+    if (!selectedId) {
+      return;
+    }
+
+    const city = cityLookup.get(selectedId);
+    if (!city) {
+      return;
+    }
+
+    addCityToDashboard(city, grid);
+    refreshCityOptions(select, addButton);
   });
 }
 

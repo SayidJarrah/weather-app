@@ -10,8 +10,18 @@
   <main class="dashboard">
     <header class="dashboard__header">
       <h1>Simple Weather Dashboard</h1>
-      <p>Current temperatures in Kyiv, Singapore, London, and Sydney.</p>
+      <p>Track current temperatures for favorite cities and add more from the list below.</p>
     </header>
+
+    <form class="city-picker" id="city-picker" aria-label="Add another city">
+      <label class="city-picker__label" for="city-select">Add a city</label>
+      <div class="city-picker__controls">
+        <select id="city-select" class="city-picker__select" name="city">
+          <option value="" disabled selected>Select a city</option>
+        </select>
+        <button type="submit" class="city-picker__button">Add</button>
+      </div>
+    </form>
 
     <section class="weather-grid" id="weather-grid" aria-live="polite"></section>
   </main>

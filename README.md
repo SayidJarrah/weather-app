@@ -1,12 +1,13 @@
 # Simple Weather Dashboard
 
-A lightweight static web page that fetches current temperatures (°C) for Kyiv, Singapore, London, and Sydney using the free Open-Meteo API.
+A lightweight static web page that fetches current temperatures (°C) for popular cities using the free Open-Meteo API.
 
 ## Features
 - Client-side implementation with vanilla HTML, CSS, and JavaScript
 - Shows loading state while fetching data
 - Displays "Data unavailable" when the API call fails
 - Rounded Celsius temperature display per city
+- Add additional cities from a curated list directly on the page
 
 ## Getting Started
 1. Clone the repository:

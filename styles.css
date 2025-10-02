@@ -36,6 +36,55 @@ body {
   color: #4d5b69;
 }
 
+.city-picker {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+}
+
+.city-picker__label {
+  font-weight: 600;
+  color: #364152;
+}
+
+.city-picker__controls {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.city-picker__select {
+  min-width: 220px;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #d1d9e0;
+  border-radius: 8px;
+  background: #f8fafc;
+  color: #243447;
+  font-size: 0.95rem;
+}
+
+.city-picker__button {
+  padding: 0.55rem 1.25rem;
+  background: #1b4cff;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.city-picker__button:disabled {
+  background: #94a3b8;
+  cursor: not-allowed;
+}
+
+.city-picker__button:not(:disabled):hover {
+  background: #153ac7;
+}
+
 .weather-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
