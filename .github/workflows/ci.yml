@@ -28,7 +28,7 @@ jobs:
         run: npm run build
 
       - name: Upload static artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: weather-dashboard-dist
           path: dist
@@ -40,7 +40,7 @@ jobs:
         run: docker save weather-dashboard:ci | gzip > weather-dashboard-image.tar.gz
 
       - name: Upload container image artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: weather-dashboard-image
           path: weather-dashboard-image.tar.gz
