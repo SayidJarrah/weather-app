@@ -31,7 +31,23 @@ function createCard(city) {
   removeButton.type = "button";
   removeButton.className = "weather-card__remove";
   removeButton.setAttribute("aria-label", `Remove ${city.name}`);
-  removeButton.textContent = "Remove";
+
+  const icon = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  icon.setAttribute("viewBox", "0 0 24 24");
+  icon.setAttribute("aria-hidden", "true");
+
+  const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+  path.setAttribute(
+    "d",
+    "M9 3h6l.32 2H20a1 1 0 0 1 0 2h-1v13a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V7H4a1 1 0 1 1 0-2h4.68Zm7 4H8v12h8ZM10 2h4a1 1 0 0 1 .99.86L15.17 5H8.83l.18-1.14A1 1 0 0 1 10 2Zm5 15a1 1 0 0 1-2 0v-6a1 1 0 1 1 2 0ZM11 11a1 1 0 0 1 2 0v6a1 1 0 0 1-2 0Z"
+  );
+  icon.appendChild(path);
+
+  const srText = document.createElement("span");
+  srText.className = "visually-hidden";
+  srText.textContent = "Remove";
+
+  removeButton.append(icon, srText);
 
   const tempValue = document.createElement("p");
   tempValue.className = "weather-card__temp";
