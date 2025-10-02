@@ -83,6 +83,12 @@ body {
   font-style: italic;
 }
 
+.weather-card__updated {
+  font-size: 0.85rem;
+  color: #61708a;
+  margin-top: 0.5rem;
+}
+
 @media (max-width: 480px) {
   body {
     padding: 1rem;

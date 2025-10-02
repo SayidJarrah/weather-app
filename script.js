@@ -23,12 +23,16 @@ function createCard(city) {
   status.className = "weather-card__status weather-card__status--loading";
   status.textContent = "Loading...";
 
-  card.append(cityTitle, tempValue, status);
+  const updated = document.createElement("p");
+  updated.className = "weather-card__updated";
+  updated.textContent = "";
 
-  return { card, tempValue, status };
+  card.append(cityTitle, tempValue, status, updated);
+
+  return { card, tempValue, status, updated };
 }
 
-async function fetchTemperature(city) {
+async function fetchWeather(city) {
   const url = new URL(apiBase);
   url.searchParams.set("latitude", city.latitude);
   url.searchParams.set("longitude", city.longitude);
@@ -41,26 +45,53 @@ async function fetchTemperature(city) {
 
   const data = await response.json();
   const temperature = data?.current_weather?.temperature;
+  const time = data?.current_weather?.time;
 
-  if (typeof temperature !== "number") {
-    throw new Error("Temperature not found in response");
+  if (typeof temperature !== "number" || !time) {
+    throw new Error("Weather data incomplete");
   }
 
-  return temperature;
+  return { temperature, time };
 }
 
-function showTemperature(tempEl, statusEl, temperature) {
-  const rounded = Math.round(temperature);
+function formatUpdatedLabel(isoString) {
+  if (!isoString) {
+    return "";
+  }
+
+  const parsedDate = new Date(isoString);
+  if (Number.isNaN(parsedDate.getTime())) {
+    return `Updated at ${isoString}`;
+  }
+
+  const dateLabel = parsedDate.toLocaleDateString([], {
+    year: "numeric",
+    month: "short",
+    day: "numeric"
+  });
+
+  const timeLabel = parsedDate.toLocaleTimeString([], {
+    hour: "2-digit",
+    minute: "2-digit"
+  });
+
+  return `Updated ${dateLabel} ${timeLabel}`;
+}
+
+function showWeather(tempEl, statusEl, updatedEl, weather) {
+  const rounded = Math.round(weather.temperature);
   tempEl.textContent = `${rounded}°C`;
   statusEl.textContent = "Current temperature";
   statusEl.classList.remove("weather-card__status--loading", "weather-card__status--error");
+  updatedEl.textContent = formatUpdatedLabel(weather.time);
 }
 
-function showError(tempEl, statusEl) {
+function showError(tempEl, statusEl, updatedEl) {
   tempEl.textContent = "--";
   statusEl.textContent = "Data unavailable";
   statusEl.classList.remove("weather-card__status--loading");
   statusEl.classList.add("weather-card__status--error");
+  updatedEl.textContent = "";
 }
 
 async function initDashboard() {
@@ -70,15 +101,15 @@ async function initDashboard() {
   }
 
   cities.forEach(async (city) => {
-    const { card, tempValue, status } = createCard(city);
+    const { card, tempValue, status, updated } = createCard(city);
     grid.appendChild(card);
 
     try {
-      const temperature = await fetchTemperature(city);
-      showTemperature(tempValue, status, temperature);
+      const weather = await fetchWeather(city);
+      showWeather(tempValue, status, updated, weather);
     } catch (error) {
       console.error(`Failed to load weather for ${city.name}:`, error);
-      showError(tempValue, status);
+      showError(tempValue, status, updated);
     }
   });
 }
