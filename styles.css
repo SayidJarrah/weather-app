@@ -1,0 +1,94 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background: #f2f4f8;
+  color: #1f2933;
+  display: flex;
+  justify-content: center;
+  padding: 1.5rem;
+}
+
+.dashboard {
+  width: 100%;
+  max-width: 960px;
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: 0 12px 40px rgba(15, 23, 42, 0.12);
+}
+
+.dashboard__header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.dashboard__header h1 {
+  margin: 0;
+  font-size: 2rem;
+}
+
+.dashboard__header p {
+  margin-top: 0.5rem;
+  color: #4d5b69;
+}
+
+.weather-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+}
+
+.weather-card {
+  background: linear-gradient(160deg, #e0ecff 0%, #f4f9ff 100%);
+  border-radius: 12px;
+  padding: 1.5rem;
+  min-height: 160px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+
+.weather-card__city {
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: #1f2933;
+  text-transform: uppercase;
+  font-size: 0.95rem;
+}
+
+.weather-card__temp {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin: 1rem 0 0;
+  color: #1b4cff;
+}
+
+.weather-card__status {
+  font-size: 0.95rem;
+  color: #3d4b5f;
+}
+
+.weather-card__status--error {
+  color: #c0392b;
+  font-weight: 600;
+}
+
+.weather-card__status--loading {
+  color: #3d4b5f;
+  font-style: italic;
+}
+
+@media (max-width: 480px) {
+  body {
+    padding: 1rem;
+  }
+
+  .dashboard {
+    padding: 1.5rem;
+  }
+}
