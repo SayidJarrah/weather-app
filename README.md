@@ -37,3 +37,9 @@ A GitHub Actions workflow (`.github/workflows/ci.yml`) runs on pushes and pull r
 - Builds static assets into `dist/` using a small Node script (`scripts/build.mjs`).
 - Uploads the built `dist/` directory as an artifact.
 - Builds an Nginx-based Docker image and stores it as a compressed artifact for download.
+- When changes land on `main`, the workflow also publishes the latest `dist/` output to GitHub Pages.
+
+## Deployment
+The site is automatically deployed to GitHub Pages from `main`. After a successful pipeline run, the latest build is available at:
+
+https://sayidjarrah.github.io/weather-app/
